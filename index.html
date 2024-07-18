@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>hello world!</title>
+    <style>
+        body{
+            align-items: center;
+            justify-content: center;
+           margin: 0;
+        }
+    #big{
+      height:100vh;
+      width: 100%;
+      background-color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    #box1{
+        height: 200px;
+        width: 400px;
+        padding: 20px;
+        border-radius: 10px;
+        border-left: 5px solid #00ffff;
+        background: #fafafa ;
+        position: absolute;
+        box-shadow: rgba(0,0,0,0.24) 0px 3px 8px;
+        z-index: 1;
+        transition: .5s;
+    }
+    #inputbox{
+        position: relative;
+    }
+    #inputbox input{
+        width: 95%;
+        height: 100%;
+        border-radius: 5px;
+        background: #fafafa;
+        border: 1px solid #bbbbbb;
+        color: gray;
+        font-size: 1.5rem;
+        margin-bottom: 30px;
+        outline: none;
+        padding: 5px;
+    }
+    #inputbox span{
+        position: absolute;
+        left:0px;
+        padding: 5px;
+        font-size: 1.5rem;
+        color:gray;
+        pointer-events: none;
+        transition: .5s;
+    }
+    #inputbox input:valid ~span,
+    #inputbox input:focus ~span
+    {
+        color: #00ffff;
+        background: #FAFAFA;
+        transform: translateX(10px) translateY(-7px);
+        font-size: 0.95rem;
+        padding: 0 10px;
+        border-left: 1px solid #00ffff;
+        border-right:1px solid #00ffff ;
+    }
+    #inputbox input:valid,
+    #inputbox input:focus{
+     border: 2px solid #00ffff;
+     padding-top:7px ;
+    }
+    #btn1{
+        height: 35px;
+        width: 100%;
+        border-radius: 5px;
+        border: 1px solid #fff;
+        font-size: 1rem;
+        background: #00ffff ;
+        color: white ;
+    }
+    #box2{
+        margin-left: 2000px; 
+        transition: 1s;
+    }
+    #chat-body{
+        height: 400px;
+        width: 450px;
+        background:#FAFAFA ;
+        overflow-y: auto;
+    }
+    #back{
+        background:#fafafa;
+        border-radius: 50%;
+        border:none;
+        font-size: 1.5rem;
+        margin-left:94%;
+        transform: rotate(45deg);
+        position:relative;
+        top:30px;
+    }
+    .message{
+        background: #fafafa;
+        border-left: 2.5px solid #00ffff;
+        margin-bottom: 20px;
+        display:grid;
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: auto;
+        grid-gap: 5px;
+        padding: 8px;
+    }
+    .name{
+        background: #fafafa;
+        grid-column:1;
+        font-size: 1rem;
+        color: slategrey;
+    }
+    .time{
+        margin-right: 5px;
+        background: #fafafa;
+        grid-column:2;
+        font-size: 1rem;
+        text-align: right;
+        color: slategrey;
+    }
+    .mes{
+        grid-column:1/span 2;
+        font-size: 1rem;
+    }
+    ::-webkit-scrollbar{
+        background: #FAFAFA;
+        width: 4px;
+    }
+    ::-webkit-scrollbar-thumb{
+        background: #00ffff;
+        height: 15px;
+        border-radius: 20px;
+
+    }
+    @media only screen and (max-width: 414px){
+    #big{
+        width: 100%;
+    }
+    #box1{
+        width:90%;
+    }
+    #inputbox input{
+        margin-left: 10%;
+        width: 80%;
+    }
+    #inputbox span{
+        left:10%;
+    }
+    #btn1{
+        width: 83%;
+        margin-left: 10%;
+    }
+    #box2{
+        width: 90%;
+    }
+    }
+    </style>
+</head>
+<body><div id="big">
+    <div id="box1">
+    <form class="xyz">
+        <div id="inputbox">
+            <label for="name"></label>
+            <input type="text" name="name" id="xyz1" required>
+            <span>Name</span>
+        </div>
+        <div id="inputbox">
+            <label for="name"></label>
+            <input type="text" name="room" id="xyz2" required>
+            <span>Room id</span>
+        </div>
+        <div>
+            <button type="submit" id="btn1">Submit</button>
+        </div>
+    </form></div>
+    <div id="box2">
+        <button id="back" onclick="menu()">+</button>
+        <div id="chat-body"></div>
+        <form class="chat-footer">
+            <div id="inputbox">
+            <input type="text" name="message" id="abc" required>
+            <span>Message...</span>
+            <button type="submit" id="btn1">Send &#9658;</button>
+            <div id="inputbox">
+        </form>
+    </div>
+</div>
+</body>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+    const socket= io.connect("http://localhost:8080");
+    const form = document.querySelector(".xyz");
+    const msg = document.querySelector(".chat-footer");
+    let obj2 ={};
+    form.addEventListener("submit",(e)=>{
+        e.preventDefault();
+        const fd=new FormData(form);
+        const obj= Object.fromEntries(fd);
+        obj2=obj;
+        const pack=JSON.stringify(obj);
+        console.log(pack);
+     socket.emit("joinroom",pack);
+     document.getElementById("xyz1").value="";
+     document.getElementById("xyz2").value="";
+     document.getElementById("box2").style.marginLeft='0px';
+     document.getElementById("box1").style.zIndex="-1";
+    });
+    msg.addEventListener("submit",(e)=>{
+        e.preventDefault();
+        const fd=new FormData(msg);
+        const obj1= Object.fromEntries(fd);
+        let obj4= Object.assign({}, obj2);
+        let currentTime=new Date();
+        obj2.time= currentTime.getHours()+":"+currentTime.getMinutes();
+        const pack1=JSON.stringify(obj2);
+        const pack2=JSON.stringify(obj1);
+        socket.emit("sendmessage",pack1,pack2,(res)=>{
+            console.log(res.status);
+        });
+        obj4.name="You";
+        const pack5=JSON.stringify(obj4);
+        displaymes(pack5,pack2);
+        document.getElementById("abc").value="";
+    });  
+    socket.on("gotmsg",(arg1,arg2)=>{
+        displaymes(arg1,arg2);
+    });
+    socket.on("someone",(arg1)=>{
+        const obj1= JSON.parse(arg1);
+        let person=document.createElement("div");
+        person.className="message";
+        person.textContent=obj1.name+" joined the chat!";
+        let chatbox= document.getElementById("chat-body");
+        chatbox.appendChild(person);
+        chatbox.scrollTop=chatbox.scrollHeight;
+    });
+    socket.on("gone",(arg1)=>{
+        const obj1= JSON.parse(arg1);
+        let person=document.createElement("div");
+        person.className="message";
+        person.textContent=obj1.name+" left the chat!";
+        let chatbox= document.getElementById("chat-body");
+        chatbox.appendChild(person);
+        chatbox.scrollTop=chatbox.scrollHeight;
+    });
+    function menu(){
+        document.getElementById("box2").style.marginLeft='2000px';
+        setTimeout(()=>{  document.getElementById("box1").style.zIndex="1";},500);
+        const pack=JSON.stringify(obj2);
+        socket.emit("left",pack);
+   }
+   function displaymes(arg1,arg2){
+        const obj1= JSON.parse(arg1);
+        const obj3= JSON.parse(arg2);
+        console.log(obj3.message);
+        let messagediv= document.createElement("div");
+        messagediv.className="message";
+        let namespan= document.createElement("span");
+        namespan.textContent=obj1.name;
+        namespan.className="name";
+        messagediv.appendChild(namespan);
+        let timespan= document.createElement("span");
+        timespan.textContent=obj1.time;
+        timespan.className="time";
+        messagediv.appendChild(timespan);
+        let messagetext=document.createElement("p");
+        messagetext.textContent=obj3.message;
+        messagetext.className="mes";
+        messagediv.appendChild(messagetext);
+        let chatbox= document.getElementById("chat-body");
+        chatbox.appendChild(messagediv);
+        chatbox.scrollTop=chatbox.scrollHeight;
+   }
+</script>
+</html>

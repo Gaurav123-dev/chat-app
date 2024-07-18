@@ -1,0 +1,22 @@
+{
+  "name": "practice",
+  "version": "1.0.0",
+  "description": "time pass",
+  "main": "first.js",
+  "scripts": {
+    "start": "node first",
+    "dev": "nodemon first"
+  },
+  "author": "Gaurav ighe",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2",
+    "moment": "^2.30.1",
+    "socket.io": "^4.7.4",
+    "socket.io-client": "^4.7.4",
+    "sqlite3": "^5.1.7"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2"
+  }
+}
