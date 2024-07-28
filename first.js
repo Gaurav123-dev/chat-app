@@ -30,7 +30,7 @@ if(error){
 const {Server}= require('socket.io');
 const io=new Server(server,{
     cors:{
-    origin:"http://localhost:8080",
+    origin:"http://chat-app-gaurav.onrender.com",
     methods:["GET","POST"],
     },
 });
